@@ -3,6 +3,7 @@
 location="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 export PATH="${location}/git:${location}/athena:${PATH}"
+export ALE_SCRIPT_BASE=$location
 
 function atlset {
     export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
@@ -37,7 +38,7 @@ function _atlas_setup_athena {
 }
 
 function _atlas_copy_template {
-    templates=/afs/cern.ch/work/r/rbi/public/atlas/athena
+    templates=$ALE_SCRIPT_BASE/athena/template/
 
     cp $templates/CMakeLists.txt ${ATLAS_LOCAL_ENVIRONMENT_SOURCE}/
 }
@@ -47,7 +48,7 @@ function _atlas_fill_template {
     file=$2
     name=$3
 
-    templates=/afs/cern.ch/work/r/rbi/public/atlas/athena/package/
+    templates=$ALE_SCRIPT_BASE/athena/template/package/
     output=$ALE_PACKAGE/$dest
 
     mkdir -p "$output"

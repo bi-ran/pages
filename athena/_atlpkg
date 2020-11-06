@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+ARGS=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -*)             echo -e "invalid option: $1\n"; return 1 ;;
+        *)              ARGS+=("$1"); shift ;;
+    esac
+done
+
+set -- "${ARGS[@]}"
+
+[ $# -lt 2 ] && { echo -e "check arguments\n"; return 1; }
+
+package=$1
+algorithm=$2
+
+pushd ${ATLAS_LOCAL_ENVIRONMENT_SOURCE} && {
+    export ALE_PACKAGE=$package;
+    export ALE_ALGORITHM=$algorithm;
+
+    _atlas_fill_template . CMakeLists.txt CMakeLists.txt;
+    _atlas_fill_template ${package} algorithm.h ${algorithm}.h;
+    _atlas_fill_template Root algorithm.cxx ${algorithm}.cxx;
+    _atlas_fill_template src/components entries.cxx ${package}_entries.cxx;
+    _atlas_fill_template src/components load.cxx ${package}_load.cxx;
+
+    popd;
+}

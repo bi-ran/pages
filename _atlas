@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+location="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export PATH="${location}/git:${location}/athena:${PATH}"
+
+function atlset {
+    export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+    source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
+}
+
+function atlb   { source ${location}/athena/_atlb "$@"; }
+function atlenv { source ${location}/athena/_atlenv "$@"; }
+function atlpkg { source ${location}/athena/_atlpkg "$@"; }
+function atlref { source ${location}/athena/_atlref "$@"; }
+function atlrel { source ${location}/athena/_atlrel "$@"; }
+function atlrun { source ${location}/athena/_atlrun "$@"; }
+
+function _atlas_export_environment {
+    base=$(readlink -f "$1")
+    src=$(readlink -f "$2")
+
+    export ATLAS_LOCAL_ENVIRONMENT_BASE=${base}
+    export ATLAS_LOCAL_ENVIRONMENT_BUILD=${base}/build
+    export ATLAS_LOCAL_ENVIRONMENT_SOURCE=${src}
+}
+
+function _atlas_setup_athena {
+    git atlas-init
+
+    pushd athena && {
+        git fetch upstream;
+        git checkout -b devel upstream/master;
+        git atlas-addpkg "$@";
+        popd;
+    }
+}
+
+function _atlas_copy_template {
+    templates=/afs/cern.ch/work/r/rbi/public/atlas/athena
+
+    cp $templates/CMakeLists.txt ${ATLAS_LOCAL_ENVIRONMENT_SOURCE}/
+}
+
+function _atlas_fill_template {
+    dest=$1
+    file=$2
+    name=$3
+
+    templates=/afs/cern.ch/work/r/rbi/public/atlas/athena/package/
+    output=$ALE_PACKAGE/$dest
+
+    mkdir -p "$output"
+
+    cp $templates/$file $output/$name
+
+    sed -i -e "s/ALE_PACKAGE/$ALE_PACKAGE/g" $output/$name
+    sed -i -e "s/ALE_ALGORITHM/$ALE_ALGORITHM/g" $output/$name
+}

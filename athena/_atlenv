@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+ARGS=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -a|--ath)       ath=1; shift ;;
+        -s|--src)       src="$2"; shift 2 ;;
+        --src=*)        src="${1#*=}"; shift ;;
+        -*)             echo -e "invalid option: $1\n"; return 1 ;;
+        *)              ARGS+=("$1"); shift ;;
+    esac
+done
+
+set -- "${ARGS[@]}"
+
+[ -z "$src" ] && [ $ath ] && src=./athena/Projects/WorkDir
+[ -z "$src" ] && src=./source
+
+_atlas_export_environment "$(pwd)" "$src"
+
+pushd ${ATLAS_LOCAL_ENVIRONMENT_BUILD} && {
+    asetup --restore; atlref; popd;
+};

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+pushd ${ATLAS_LOCAL_ENVIRONMENT_BUILD} && {
+    cmake ${ATLAS_LOCAL_ENVIRONMENT_SOURCE}; make "$@"; popd;
+};

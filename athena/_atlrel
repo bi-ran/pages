@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+ARGS=()
+
+pkgs=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -a|--ath)       ath=1; shift ;;
+        -g|--git)       git=1; shift ;;
+        -p|--pkg)       pkgs+=("$2"); shift 2;;
+        --pkg=*)        pkgs+=("${1#*=}"); shift ;;
+        -s|--src)       src="$2"; shift 2 ;;
+        --src=*)        src="${1#*=}"; shift ;;
+        -*)             echo -e "invalid option: $1\n"; return 1 ;;
+        *)              ARGS+=("$1"); shift ;;
+    esac
+done
+
+set -- "${ARGS[@]}"
+
+[ $# -lt 1 ] && { echo -e "check arguments\n"; return 1; }
+
+release=$1
+
+[ $ath ] && [ ! $git ] && _atlas_setup_athena "${pkgs[@]}"
+
+[ -z "$src" ] && [ $ath ] && src=./athena/Projects/WorkDir
+[ -z "$src" ] && src=./source
+
+_atlas_export_environment "$(pwd)" "$src"
+
+mkdir -p ${ATLAS_LOCAL_ENVIRONMENT_BUILD}
+mkdir -p ${ATLAS_LOCAL_ENVIRONMENT_SOURCE}
+
+[ $ath ] || _atlas_copy_template;
+
+pushd ${ATLAS_LOCAL_ENVIRONMENT_BUILD} && {
+    asetup "$release"; atlb; popd;
+};

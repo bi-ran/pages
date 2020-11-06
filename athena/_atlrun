@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+ARGS=()
+
+fwargs=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -f|--fd)        fwargs+="$2"; shift 2 ;;
+        --fwd=*)        fwargs+="${1#*=}"; shift ;;
+        -o|--out)       out="$2"; shift 2 ;;
+        --out=*)        out="${1#*=}"; shift ;;
+        -*)             echo -e "invalid option: $1\n"; return 1 ;;
+        *)              ARGS+=("$1"); shift ;;
+    esac
+done
+
+set -- "${ARGS[@]}"
+
+[ $# -lt 1 ] && { echo -e "check arguments\n"; return 1; }
+
+config=$(readlink -f "$1")
+
+[ -z "$out" ] && out=${ATLAS_LOCAL_ENVIRONMENT_BASE}/output;
+
+output=$(readlink -f $out)
+
+[ ! -d "$output" ] && mkdir -p "$output"
+
+pushd "$output" && {
+    athena.py "$config" "${fwargs[@]}"; popd;
+};

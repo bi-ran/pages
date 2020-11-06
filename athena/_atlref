@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+pushd ${ATLAS_LOCAL_ENVIRONMENT_BUILD} && {
+    source ${BINARY_TAG}/setup.sh; popd;
+};

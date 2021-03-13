@@ -36,25 +36,3 @@ function _atlas_setup_athena {
         popd;
     }
 }
-
-function _atlas_copy_template {
-    templates=$ALE_SCRIPT_BASE/athena/template/
-
-    cp $templates/CMakeLists.txt ${ATLAS_LOCAL_ENVIRONMENT_SOURCE}/
-}
-
-function _atlas_fill_template {
-    dest=$1
-    file=$2
-    name=$3
-
-    templates=$ALE_SCRIPT_BASE/athena/template/package/
-    output=$ALE_PACKAGE/$dest
-
-    mkdir -p "$output"
-
-    cp $templates/$file $output/$name
-
-    sed -i -e "s/ALE_PACKAGE/$ALE_PACKAGE/g" $output/$name
-    sed -i -e "s/ALE_ALGORITHM/$ALE_ALGORITHM/g" $output/$name
-}

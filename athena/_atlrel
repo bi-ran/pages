@@ -33,8 +33,6 @@ _atlas_export_environment "$(pwd)" "$src"
 mkdir -p ${ATLAS_LOCAL_ENVIRONMENT_BUILD}
 mkdir -p ${ATLAS_LOCAL_ENVIRONMENT_SOURCE}
 
-[ $ath ] || _atlas_copy_template;
-
 pushd ${ATLAS_LOCAL_ENVIRONMENT_BUILD} && {
     asetup "$release"; atlb; popd;
 };

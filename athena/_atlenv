@@ -5,6 +5,7 @@ ARGS=()
 while [ $# -gt 0 ]; do
     case "$1" in
         -a|--ath)       ath=1; shift ;;
+        -c|--cln)       cln=1; shift ;;
         -s|--src)       src="$2"; shift 2 ;;
         --src=*)        src="${1#*=}"; shift ;;
         -*)             echo -e "invalid option: $1\n"; return 1 ;;
@@ -20,5 +21,5 @@ set -- "${ARGS[@]}"
 _atlas_export_environment "$(pwd)" "$src"
 
 pushd ${ATLAS_LOCAL_ENVIRONMENT_BUILD} && {
-    asetup --restore; atlref; popd;
+    asetup --restore; [ ! $cln ] && atlref; popd;
 };

@@ -30,7 +30,7 @@ function _atlas_setup_athena {
     git atlas-init
 
     pushd athena && {
-        git fetch upstream;
+        git fetch upstream --no-tags;
         git checkout -b devel upstream/master;
         git atlas-addpkg "$@";
         popd;
